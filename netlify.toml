@@ -1,0 +1,7 @@
+[build]
+  base    = "."
+  publish = "dist"
+  command = "npm run build"
+  
+# [functions]
+#   directory = "netlify/functions"  # Solo si implementas funciones de Netlify
