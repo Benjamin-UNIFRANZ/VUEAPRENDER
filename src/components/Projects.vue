@@ -1,78 +1,72 @@
 <template>
-  <div class="container">
-    <div v-if="isLoading">Cargando...</div>
-    <div v-else-if="error">{{ error }}</div>
+  <div class="container mx-auto p-4">
+    <div v-if="isLoading" class="text-center">Cargando...</div>
+    <div v-else-if="error" class="text-red-500 text-center">{{ error }}</div>
     <div v-else>
-      <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2>Mis Espacios de Proyecto</h2>
-        <button @click="showNewSpaceModal" class="btn btn-primary">
-          <i class="bi bi-plus-circle"></i> Nuevo Espacio
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="text-2xl font-semibold text-white">Mis Espacios de Proyecto</h2>
+        <button @click="showNewSpaceModal" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+          <i class="bi bi-plus-circle mr-2"></i> Nuevo Espacio
         </button>
       </div>
 
       <!-- Lista de espacios de proyecto -->
-      <div class="row">
-        <div v-for="space in projectSpaces" :key="space.id" class="col-md-4 mb-4">
-          <div class="card project-card">
-            <div class="card-header d-flex justify-content-between align-items-center">
-              <span class="badge bg-secondary">ID: {{ space.short_id }}</span>
-              <div class="dropdown">
-                <button class="btn btn-sm btn-light" type="button" data-bs-toggle="dropdown">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div v-for="space in projectSpaces" :key="space.id" class="rounded overflow-hidden shadow-lg">
+          <div class="px-6 py-4 bg-gray-800">
+            <div class="flex justify-between items-center mb-2">
+              <span class="inline-block bg-gray-700 rounded-full px-3 py-1 text-sm font-semibold text-gray-300 mr-2">ID: {{ space.short_id }}</span>
+              <div class="relative">
+                <button class="bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="button" data-bs-toggle="dropdown">
                   <i class="bi bi-three-dots-vertical"></i>
                 </button>
-                <ul class="dropdown-menu dropdown-menu-end">
+                <ul class="dropdown-menu absolute right-0 mt-2 py-2 w-48 bg-gray-700 rounded-md shadow-xl z-10">
                   <li>
-                    <button @click="copySpaceId(space)" class="dropdown-item">
+                    <button @click="copySpaceId(space)" class="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-600 hover:text-white">
                       Copiar ID
                     </button>
                   </li>
                   <li>
-                    <button @click="confirmDeleteSpace(space)" class="dropdown-item text-danger">
+                    <button @click="confirmDeleteSpace(space)" class="block px-4 py-2 text-sm text-red-500 hover:bg-gray-600 hover:text-white">
                       Eliminar Espacio
                     </button>
                   </li>
                 </ul>
               </div>
             </div>
-            <div class="card-body">
-              <h5 class="card-title">{{ space.name }}</h5>
-              <div class="mb-2">
-                <small class="text-muted">
-                  <i class="bi bi-calendar"></i> {{ formatDate(space.created_at) }}
-                </small>
-              </div>
-              <div class="mb-3">
-                <span class="badge bg-info">
-                  {{ getFilesCount(space.id) }} archivos
-                </span>
-              </div>
-              <div class="d-flex gap-2 mb-2">
-                <button @click="openSpace(space)" class="btn btn-primary flex-grow-1">
-                  Abrir Espacio
-                </button>
-                <button @click="confirmDeleteSpace(space)" class="btn btn-outline-danger">
-                  <i class="bi bi-trash"></i>
-                </button>
-              </div>
-              <div class="d-flex">
-                <button @click="openWithSidebar(space)" class="btn btn-secondary w-100">
-                  <i class="bi bi-list-ul"></i> Ver Archivos en Barra Lateral
-                </button>
-              </div>
-            </div>
-            <div class="card-footer">
-              <button @click="shareProjectSpace(space)" class="btn btn-info btn-sm w-100" title="Compartir espacio">
-                <i class="bi bi-share"></i> Compartir
+            <div class="font-bold text-white text-xl mb-2">{{ space.name }}</div>
+            <p class="text-gray-400 text-sm">
+              <i class="bi bi-calendar mr-1"></i> {{ formatDate(space.created_at) }}
+            </p>
+            <span class="inline-block bg-blue-500 rounded-full px-3 py-1 text-sm font-semibold text-white mt-2">
+              {{ getFilesCount(space.id) }} archivos
+            </span>
+          </div>
+          <div class="px-6 py-4 bg-gray-900">
+            <div class="flex justify-between">
+              <button @click="openSpace(space)" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+                Ver Proyecto
+              </button>
+              <button @click="confirmDeleteSpace(space)" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+                <i class="bi bi-trash"></i>
               </button>
             </div>
+            <button @click="openWithSidebar(space)" class="mt-4 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full">
+              <i class="bi bi-list-ul mr-2"></i> Abrir Espacio en Editor
+            </button>
+          </div>
+          <div class="px-6 py-4 bg-gray-800">
+            <button @click="shareProjectSpace(space)" class="bg-indigo-500 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full" title="Compartir espacio">
+              <i class="bi bi-share mr-2"></i> Compartir
+            </button>
           </div>
         </div>
       </div>
 
       <!-- Mensaje cuando no hay espacios -->
-      <div v-if="projectSpaces.length === 0" class="col-12 text-center">
-        <div class="alert alert-info">
-          No tienes espacios de proyecto. Crea uno nuevo usando el botón superior.
+      <div v-if="projectSpaces.length === 0" class="text-center mt-8">
+        <div class="bg-gray-700 border-l-4 border-blue-500 text-blue-100 p-4">
+          <p>No tienes espacios de proyecto. Crea uno nuevo usando el botón superior.</p>
         </div>
       </div>
     </div>
@@ -80,24 +74,24 @@
     <!-- New Project Modal -->
     <div class="modal fade" id="newSpaceModal" tabindex="-1" ref="newSpaceModalRef">
       <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
+        <div class="modal-content bg-gray-800 text-white">
+          <div class="modal-header bg-gray-700">
             <h5 class="modal-title">Nuevo Espacio de Proyecto</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
             <div class="mb-3">
               <label for="spaceName" class="form-label">Nombre del Espacio</label>
               <input
                 type="text"
-                class="form-control"
+                class="form-control bg-gray-700 text-white border-gray-600 focus:ring-blue-500 focus:border-blue-500"
                 id="spaceName"
                 v-model="newSpaceName"
                 placeholder="Ingrese un nombre para el espacio"
               >
             </div>
           </div>
-          <div class="modal-footer">
+          <div class="modal-footer bg-gray-700">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
               Cancelar
             </button>
@@ -117,34 +111,34 @@
     <!-- Modal para espacio abierto -->
     <div class="modal fade" id="spaceModal" tabindex="-1" ref="spaceModalRef">
       <div class="modal-dialog modal-xl">
-        <div class="modal-content">
-          <div class="modal-header">
+        <div class="modal-content bg-gray-800 text-white">
+          <div class="modal-header bg-gray-700">
             <h5 class="modal-title">{{ currentSpace?.name }}</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
-            <div class="d-flex justify-content-between mb-3">
-              <button @click="showNewFileModal" class="btn btn-success">
-                <i class="bi bi-plus-circle"></i> Nuevo Archivo
+            <div class="flex justify-between mb-3">
+              <button @click="showNewFileModal" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+                <i class="bi bi-plus-circle mr-2"></i> Nuevo Archivo
               </button>
             </div>
             
             <!-- Lista de archivos -->
-            <div class="list-group">
+            <div class="divide-y divide-gray-700">
               <div v-for="file in currentSpaceFiles" :key="file.id" 
-                   class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
-                <div>
-                  <i class="bi bi-file-earmark-code me-2"></i>
+                   class="py-3 px-4 flex justify-between items-center hover:bg-gray-700">
+                <div class="text-purple-500 hover:text-white">
+                  <i class="bi bi-file-earmark-code mr-2"></i>
                   {{ file.name }}
                 </div>
-                <div class="btn-group">
-                  <button @click="openFile(file)" class="btn btn-sm btn-primary">
+                <div class="space-x-2">
+                  <button @click="openFile(file)" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
                     <i class="bi bi-pencil"></i> Editar
                   </button>
-                  <button @click="confirmDeleteFile(file)" class="btn btn-sm btn-danger">
+                  <button @click="confirmDeleteFile(file)" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
                     <i class="bi bi-trash"></i>
                   </button>
-                  <button @click="shareFile(file)" class="btn btn-sm btn-info">
+                  <button @click="shareFile(file)" class="bg-indigo-500 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded">
                     <i class="bi bi-share"></i> Compartir
                   </button>
                 </div>
@@ -153,7 +147,7 @@
 
             <!-- Mensaje cuando no hay archivos -->
             <div v-if="currentSpaceFiles.length === 0" class="text-center mt-3">
-              <p class="text-muted">No hay archivos en este espacio. Crea uno nuevo.</p>
+              <p class="text-gray-400">No hay archivos en este espacio. Crea uno nuevo.</p>
             </div>
           </div>
         </div>
@@ -163,24 +157,24 @@
     <!-- Modal para nuevo archivo -->
     <div class="modal fade" id="newFileModal" tabindex="-1" ref="newFileModalRef">
       <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
+        <div class="modal-content bg-gray-800 text-white">
+          <div class="modal-header bg-gray-700">
             <h5 class="modal-title">Nuevo Archivo</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
             <div class="mb-3">
               <label for="fileName" class="form-label">Nombre del Archivo</label>
               <input
                 type="text"
-                class="form-control"
+                class="form-control bg-gray-700 text-white border-gray-600 focus:ring-blue-500 focus:border-blue-500"
                 id="fileName"
                 v-model="newFileName"
                 placeholder="Ingrese un nombre para el archivo"
               >
             </div>
           </div>
-          <div class="modal-footer">
+          <div class="modal-footer bg-gray-700">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
               Cancelar
             </button>
@@ -200,8 +194,8 @@
     <!-- Modal de confirmación de eliminación -->
     <div class="modal fade" id="deleteModal" tabindex="-1" ref="deleteModalRef">
       <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
+        <div class="modal-content bg-gray-800 text-white">
+          <div class="modal-header bg-gray-700">
             <h5 class="modal-title">Confirmar eliminación</h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
           </div>
@@ -209,13 +203,13 @@
             <p v-if="itemToDelete?.type === 'space'">
               ¿Estás seguro que deseas eliminar el espacio "<strong>{{ itemToDelete.item.name }}</strong>"?
               <br>
-              <small class="text-danger">Esta acción eliminará todos los archivos dentro del espacio.</small>
+              <small class="text-red-500">Esta acción eliminará todos los archivos dentro del espacio.</small>
             </p>
             <p v-else>
               ¿Estás seguro que deseas eliminar el archivo "<strong>{{ itemToDelete?.item.name }}</strong>"?
             </p>
           </div>
-          <div class="modal-footer">
+          <div class="modal-footer bg-gray-700">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
               Cancelar
             </button>
@@ -234,54 +228,52 @@
 
     <!-- Toast de copia exitosa -->
     <div
-      class="toast position-fixed bottom-0 end-0 m-3"
-      :class="{ show: showCopyToast }"
-      role="alert"
-      aria-live="assertive"
-      aria-atomic="true"
+      class="fixed bottom-0 right-0 m-3 bg-green-500 text-white py-2 px-4 rounded shadow-md transition-opacity duration-300 ease-in-out"
+      :class="{ 'opacity-100': showCopyToast, 'opacity-0': !showCopyToast }"
       style="z-index: 1050"
     >
-      <div class="toast-header bg-success text-white">
-        <strong class="me-auto">ID Copiado</strong>
-        <button type="button" class="btn-close btn-close-white" @click="showCopyToast = false"></button>
+      <div class="flex items-center justify-between">
+        <strong class="mr-4">ID Copiado</strong>
+        <button type="button" class="ml-auto text-white hover:text-gray-200 focus:outline-none" @click="showCopyToast = false">
+          <span aria-hidden="true">&times;</span>
+        </button>
       </div>
-      <div class="toast-body">ID del espacio copiado al portapapeles.</div>
+      <div class="mt-1 text-sm">ID del espacio copiado al portapapeles.</div>
     </div>
     
     <!-- Modal para compartir -->
     <div class="modal fade" id="shareModal" tabindex="-1" ref="shareModalRef">
       <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title">Compartir Proyecto</h5>
+        <div class="modal-content bg-gray-800 text-dark">
+          <div class="modal-header bg-gray-700">
+            <h5 class="modal-title text-white">Compartir Proyecto</h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
           </div>
-          <div class="modal-body">
+            <div class="modal-body">
             <div class="mb-3">
-              <label class="form-label">Link del proyecto:</label>
+              <label class="form-label text-dark">Link del proyecto:</label>
               <div class="input-group">
-                <input type="text" class="form-control" :value="shareUrl" readonly ref="shareUrlInput">
-                <button class="btn btn-outline-secondary" @click="copyShareUrl">
-                  <i class="bi bi-clipboard"></i>
-                </button>
+              <input type="text" class="form-control bg-gray-700 text-dark border-gray-600 focus:ring-blue-500 focus:border-blue-500" :value="shareUrl" readonly ref="shareUrlInput">
+              <button class="btn btn-outline-secondary" @click="copyShareUrl">
+                <i class="bi bi-clipboard"></i>
+              </button>
               </div>
             </div>
             <div class="d-grid gap-2">
               <a :href="whatsappShareUrl" target="_blank" class="btn btn-success">
-                <i class="bi bi-whatsapp"></i> Compartir por WhatsApp
+              <i class="bi bi-whatsapp"></i> Compartir por WhatsApp
               </a>
             </div>
             <div v-if="qrCodeUrl" class="text-center mt-3">
-              <p>Escanea este código QR para compartir:</p>
-              <img :src="qrCodeUrl" alt="QR Code" class="img-fluid">
+              <p class="text-dark">Escanea este código QR para compartir:</p>
+              <img :src="qrCodeUrl" alt="QR Code" class="img-fluid mx-auto d-block">
             </div>
-          </div>
+            </div>
         </div>
       </div>
     </div>
   </div>
 </template>
-
 <script setup>
 import { ref, onMounted, computed, nextTick } from 'vue';
 import { supabase } from '../supabase';
@@ -637,7 +629,7 @@ const shareProjectSpace = async (space) => {
     });
 
   // Usar JavaScript vanilla para mostrar el modal
-  const modalElement = document.querySelector('#shareModalRef');
+  const modalElement = document.getElementById('shareModal');
   if (modalElement) {
     const shareModalInstance = Modal.getInstance(modalElement);
     shareModalInstance.show();
@@ -708,6 +700,7 @@ const openWithSidebar = (space) => {
   });
 };
 </script>
+
 <style scoped>
 .project-card {
   transition: transform 0.2s, box-shadow 0.2s;

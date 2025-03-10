@@ -1,27 +1,29 @@
 <template>
-  <nav class="navbar navbar-expand-lg navbar-dark custom-navbar mb-4">
-    <div class="container">
-      <router-link class="navbar-brand" to="/">C# Editor</router-link>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav me-auto">
-          <li class="nav-item" v-if="session">
-            <router-link class="nav-link" to="/">Editor</router-link>
-          </li>
-          <li class="nav-item" v-if="session">
-            <router-link class="nav-link" to="/projects">Projects</router-link>
-          </li>
-        </ul>
-        <ul class="navbar-nav">
-          <li class="nav-item" v-if="session">
-            <a @click="handleLogout" href="#" class="nav-link">Logout</a>
-          </li>
-          <li class="nav-item" v-else>
-            <router-link class="nav-link" to="/auth">Login</router-link>
-          </li>
-        </ul>
+  <nav class="bg-gray-800 py-1 mb-1">
+    <div class="container mx-auto px-4">
+      <div class="flex items-center justify-between">
+        <router-link class="text-white font-semibold text-2xl" to="/">C# Editor</router-link>
+        <button class="navbar-toggler text-white focus:outline-none" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="hidden md:flex items-center space-x-4">
+          <ul class="flex space-x-4">
+            <li v-if="session">
+              <router-link class="text-white hover:text-white text-lg" to="/">Editor</router-link>
+            </li>
+            <li v-if="session">
+              <router-link class="text-white hover:text-white text-lg" to="/projects">Projects</router-link>
+            </li>
+          </ul>
+          <ul class="flex space-x-4">
+            <li v-if="session">
+              <a @click="handleLogout" href="#" class="text-white hover:text-white text-lg">Logout</a>
+            </li>
+            <li v-else>
+              <router-link class="text-white hover:text-white text-lg" to="/auth">Login</router-link>
+            </li>
+          </ul>
+        </div>
       </div>
     </div>
   </nav>

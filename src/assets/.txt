@@ -1,193 +1,134 @@
 <template>
-  <div class="min-h-screen bg-gray-900 text-white py-0 px-0">
-    <div class="w-full h-full">
-      <!-- Panel de proyecto, Editor y JDoodle en una sola fila -->
-      <div class="flex h-full ">
-        <!-- Panel de proyecto (izquierda) -->
-        <div class="p-2 h-full w-2/8">
-          <h5 class="text-lg font-semibold mb-3">Proyecto</h5>
-          <!-- Botón para ver todos los proyectos -->
-          <div class="mb-3">
-            <button @click="goToProjects" class="w-full py-2 px-4 bg-blue-500 hover:bg-blue-700 text-white rounded">
-              <i class="bi bi-folder mr-2"></i> Ver todos mis proyectos
-            </button>
-          </div>
-
-          <div class="mb-3">
-            <label class="block text-sm font-medium text-gray-300">Abrir Proyecto</label>
-            <select class="mt-1 block w-full rounded-md border-gray-700 shadow-sm focus:border-blue-500 focus:ring-blue-500 bg-gray-700 text-white" v-model="selectedProject" @change="handleProjectChange">
-              <option :value="null">Selecciona un proyecto</option>
-              <option v-for="space in projectSpaces" :key="space.id" :value="space.id">
-          {{ space.name }}
-              </option>
-            </select>
-          </div>
-
-          <div v-if="currentProject">
-            <h6 class="text-md font-semibold">{{ currentProject.name }}</h6>
-
-            <!-- Formulario para nuevo archivo -->
-            <div class="mb-3">
-              <label for="newFileName" class="block text-sm font-medium text-gray-300">Nuevo Archivo</label>
-              <div class="mt-1 flex rounded-md shadow-sm">
-          <input
-            type="text"
-            class="flex-1 block w-full rounded-none rounded-l-md border-gray-700 text-white focus:border-blue-500 focus:ring-blue-500 bg-gray-700"
-            id="newFileName"
-            v-model="newFileName"
-            placeholder="Nombre del archivo"
-          >
-          <button
-            class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-r-md focus:outline-none focus:shadow-outline"
-            @click="createFile"
-            :disabled="isCreatingFile"
-          >
-            <i class="bi bi-plus-circle"></i>
-          </button>
-              </div>
-            </div>
-
-            <ul class="list-none p-0">
-              <li v-for="file in projectFiles" :key="file.id" class="py-2 px-4 rounded-md flex justify-between items-center bg-gray-700 mb-2">
-            <div class="flex-1">       
-            {{ file.name }}
-            </div>
-          <div class="flex space-x-1">
-            <button @click="openFile(file)" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded">
-              <i class="bi bi-pencil"></i>
-            </button>
-            <button @click="confirmDeleteFile(file)" class="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded">
-              <i class="bi bi-trash"></i>
-            </button>
-            <button @click="shareFile(file)" class="bg-indigo-500 hover:bg-indigo-700 text-white font-bold py-1 px-2 rounded">
-              <i class="bi bi-share"></i>
-            </button>
-          </div>
-              </li>
-            </ul>
-          </div>
-          <div v-else>
-            <p class="text-gray-400">Selecciona un proyecto para ver sus archivos.</p>
-          </div>
-        </div>
-
-        <!-- Editor y JDoodle (derecha) -->
-        <div class="w-7/8 flex h-full">
-          <!-- Editor (izquierda) -->
-          <div class="w-5/8 p-1 h-full">
-            <div class="h-full">
-              <div class="flex items-center justify-between p-2 bg-gray-700 rounded-t-lg">
-          <div class="flex items-center">
-            <h5 class="text-lg font-semibold mr-3">Editor C#</h5>
-            <div class="flex rounded-md shadow-sm">
-              <input
-                type="text"
-                class="flex-1 block w-full rounded-none rounded-l-md border-gray-700 text-white focus:border-blue-500 focus:ring-blue-500 bg-gray-700"
-                v-model="currentFileName"
-                :readonly="!fileId"
-                placeholder="Nombre del archivo"
-              >
+  <div class="flex h-screen bg-gray-900">
+    <!-- Left Panel - Project Explorer -->
+    <div class="w-64 border-r border-gray-800">
+      <div class="p-4 border-b border-gray-800">
+        <button
+          @click="showNewProjectModal"
+          class="w-full bg-blue-600 text-white rounded py-2 px-4 flex items-center justify-center space-x-2 hover:bg-blue-700"
+        >
+          <i class="bi bi-folder-plus"></i>
+          <span>New Project</span>
+        </button>
+      </div>
+      <div class="p-4">
+        <h3 class="text-white font-semibold mb-4">Projects</h3>
+        <!-- Project list will go here -->
+        <div v-if="projectSpaces.length > 0">
+          <ul class="list-none p-0 m-0">
+            <li v-for="space in projectSpaces" :key="space.id" class="mb-2">
               <button
-                v-if="fileId"
-                @click="updateFileName"
-                class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-r-md focus:outline-none focus:shadow-outline"
-                :disabled="isUpdatingFileName"
+                @click="handleProjectChange(space.id)"
+                class="w-full text-left text-gray-300 hover:text-white hover:bg-gray-800 py-2 px-4 rounded"
               >
-                <i class="bi bi-check"></i>
+                {{ space.name }}
               </button>
-            </div>
-          </div>
-          <div class="space-x-2">
-            <button
-              v-if="!fileId"
-              @click="showNewFileModal"
-              class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
-            >
-              <i class="bi bi-plus-circle mr-2"></i> Nuevo Archivo
-            </button>
-            <button
-              v-if="fileId"
-              @click="updateCode"
-              class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-            >
-              Actualizar Archivo
-            </button>
-            <button v-if="sharedFileId" @click="showSaveToProjectModal" class="bg-indigo-500 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded">
-              Guardar en Proyecto
-            </button>
-          </div>
-              </div>
-  
-            <div class="relative">
-            <button
-              @click="copyCodeToClipboard"
-              class="absolute top-2 right-2 bg-gray-600 hover:bg-gray-700 text-white font-bold py-1 px-2 rounded text-sm copy-button"
-            >
-              <i class="bi bi-clipboard"></i> Copiar
-            </button>
-            <Codemirror
-              v-model="code"
-              placeholder="Write your C# code here..."
-              :style="{ height: '1000px' }"
-              :autofocus="true"
-              :indent-with-tab="true"
-              :tabSize="2"
-              :extensions="extensions"
-            />
-            </div>
-
-            </div>
-          </div>
-
-          <!-- JDoodle iframe (derecha) -->
-          <div class="w-3/8 p-0">
-            <div class="bg-gray-800 rounded-lg shadow-md">
-              <div class="p-1 bg-gray-700 rounded-t-lg flex items-center justify-between">
-                <h5 class="text-lg font-semibold">JDoodle C# Online</h5>
-                <div>
-                  <button @click="reloadJdoodle" class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-1 px-2 rounded text-sm">
-                    <i class="bi bi-arrow-clockwise"></i> Recargar
-                  </button>
-                </div>
-              </div>
-              <div class="p-0">
-                <div class="bg-blue-900 text-white p-3 rounded mb-3" v-if="showJdoodleHelp">
-                  <h5 class="font-semibold">¿Cómo usar JDoodle?</h5>
-                  <ol class="list-decimal pl-5">
-                    <li>Haz clic en "Copiar" en el editor superior</li>
-                    <li>Pega el código en el editor de JDoodle</li>
-                    <li>Haz clic en "Execute" para ejecutar el código</li>
-                  </ol>
-                  <button @click="showJdoodleHelp = false" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded text-sm mt-2">Entendido</button>
-                </div>
-                <iframe
-                  ref="jdoodleFrame"
-                  src="https://www.jdoodle.com/compile-c-sharp-online/"
-                  style="width: 100%; height: 1000px; border: none;"
-                  @load="onJdoodleLoad"
-                ></iframe>
-              </div>
-            </div>
-          </div>
+            </li>
+          </ul>
         </div>
+        <div v-else class="text-gray-500">No projects yet.</div>
       </div>
     </div>
 
-    <!-- Modales -->
+    <!-- Main Editor Area -->
+    <div class="flex-1 flex flex-col">
+      <!-- Editor Header -->
+      <div class="flex items-center justify-between p-4 border-b border-gray-800">
+        <div class="text-white">C# Editor</div>
+        <div class="flex space-x-2">
+          <button
+            @click="copyCodeToClipboard"
+            class="p-2 hover:bg-gray-800 rounded text-white"
+            title="Copy Code"
+          >
+            <i class="bi bi-clipboard"></i>
+          </button>
+          <button
+            @click="updateCode"
+            class="p-2 hover:bg-gray-800 rounded text-white"
+            title="Save"
+          >
+            <i class="bi bi-save"></i>
+          </button>
+          <button
+            @click="shareFile"
+            class="p-2 hover:bg-gray-800 rounded text-white"
+            title="Share"
+          >
+            <i class="bi bi-share2"></i>
+          </button>
+          <button
+            @click="toggleFullScreen"
+            class="p-2 hover:bg-gray-800 rounded text-white"
+            title="Toggle Full Screen"
+          >
+            <i :class="jdoodleFullScreen ? 'bi bi-fullscreen-exit' : 'bi bi-fullscreen'"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Code Editor -->
+      <div class="flex-1 overflow-auto">
+        <Codemirror
+          v-model="code"
+          placeholder="Write your C# code here..."
+          :style="{ height: '300px' }"
+          :autofocus="true"
+          :indent-with-tab="true"
+          :tabSize="2"
+          :extensions="extensions"
+        />
+      </div>
+    </div>
+
+    <!-- JDoodle Integration -->
+    <div :class="`border-l border-gray-800 ${jdoodleFullScreen ? 'w-1/2' : 'w-96'}`">
+      <div class="flex items-center justify-between p-4 border-b border-gray-800">
+        <h3 class="text-white font-semibold">JDoodle C# Online</h3>
+        <button
+          @click="toggleFullScreen"
+          class="text-gray-400 hover:text-white"
+        >
+          <i :class="jdoodleFullScreen ? 'bi bi-fullscreen-exit' : 'bi bi-fullscreen'"></i>
+        </button>
+      </div>
+      <div v-if="showJdoodleHelp" class="p-4 bg-gray-800 m-2 rounded">
+        <h4 class="text-white font-semibold mb-2">How to use JDoodle:</h4>
+        <ol class="text-gray-300 list-decimal ml-4 space-y-1">
+          <li>Click "Copy" in the editor above</li>
+          <li>Paste the code in JDoodle editor</li>
+          <li>Click "Execute" to run the code</li>
+        </ol>
+        <button
+          @click="showJdoodleHelp = false"
+          class="mt-2 text-blue-400 hover:text-blue-300"
+        >
+          Got it
+        </button>
+      </div>
+      <iframe
+        ref="jdoodleFrame"
+        src="https://www.jdoodle.com/compile-c-sharp-online/"
+        class="w-full h-[calc(100%-57px)]"
+        style="border: none"
+        @load="onJdoodleLoad"
+      />
+    </div>
+
     <!-- New Project Modal -->
     <div class="modal fade" id="newProjectModal" tabindex="-1" ref="newProjectModalRef">
       <div class="modal-dialog">
-        <div class="modal-content bg-gray-800 text-white">
-          <div class="modal-header bg-gray-700">
+        <div class="modal-content new-project-modal">
+          <div class="modal-header new-project-header">
             <h5 class="modal-title">Nuevo Proyecto</h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
           </div>
-          <div class="modal-body">
+          <div class="modal-body new-project-body">
             <div class="mb-3">
               <label class="form-label">Nombre del Espacio</label>
               <input
                 type="text"
-                class="form-control bg-gray-700 text-white border-gray-600 focus:ring-blue-500 focus:border-blue-500"
+                class="form-control"
                 v-model="newProjectName"
                 placeholder="Ingrese un nombre para el espacio"
               >
@@ -196,13 +137,13 @@
               <label class="form-label">Nombre del Archivo</label>
               <input
                 type="text"
-                class="form-control bg-gray-700 text-white border-gray-600 focus:ring-blue-500 focus:border-blue-500"
+                class="form-control"
                 v-model="newFileName"
                 placeholder="Ingrese un nombre para el archivo inicial"
               >
             </div>
           </div>
-          <div class="modal-footer bg-gray-700">
+          <div class="modal-footer new-project-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
               Cancelar
             </button>
@@ -218,156 +159,7 @@
         </div>
       </div>
     </div>
-
-    <!-- Save to Project Modal -->
-    <div class="modal fade" id="saveToProjectModal" tabindex="-1" ref="saveToProjectModalRef">
-      <div class="modal-dialog">
-        <div class="modal-content bg-gray-800 text-white">
-          <div class="modal-header bg-gray-700">
-            <h5 class="modal-title">Guardar en Proyecto</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-          </div>
-          <div class="modal-body">
-            <p>Selecciona un espacio de proyecto para guardar el archivo:</p>
-            <select class="form-select bg-gray-700 text-white border-gray-600 focus:ring-blue-500 focus:border-blue-500" v-model="selectedProjectSpace">
-              <option v-for="space in projectSpaces" :key="space.id" :value="space.id">
-                {{ space.name }}
-              </option>
-            </select>
-          </div>
-          <div class="modal-footer bg-gray-700">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-              Cancelar
-            </button>
-            <button type="button" class="btn btn-primary" @click="saveToProject">
-              Guardar
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Modal de confirmación de eliminación -->
-    <div class="modal fade" id="deleteModal" tabindex="-1" ref="deleteModalRef">
-      <div class="modal-dialog">
-        <div class="modal-content bg-gray-800 text-white">
-          <div class="modal-header bg-gray-700">
-            <h5 class="modal-title">Confirmar eliminación</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-          </div>
-          <div class="modal-body">
-            <p v-if="itemToDelete?.type === 'space'">
-              ¿Estás seguro que deseas eliminar el espacio "<strong>{{ itemToDelete.item.name }}</strong>"?
-              <br>
-              <small class="text-red-500">Esta acción eliminará todos los archivos dentro del espacio.</small>
-            </p>
-            <p v-else>
-              ¿Estás seguro que deseas eliminar el archivo "<strong>{{ itemToDelete?.item.name }}</strong>"?
-            </p>
-          </div>
-          <div class="modal-footer bg-gray-700">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-              Cancelar
-            </button>
-            <button
-              type="button"
-              class="btn btn-danger"
-              @click="deleteItem"
-              :disabled="isDeleting"
-            >
-              {{ isDeleting ? 'Eliminando...' : 'Eliminar' }}
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Modal para compartir -->
-    <div class="modal fade" id="shareModal" tabindex="-1" ref="shareModalRef">
-      <div class="modal-dialog">
-        <div class="modal-content bg-gray-800 text-white">
-          <div class="modal-header bg-gray-700">
-            <h5 class="modal-title">Compartir Proyecto</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-          </div>
-          <div class="modal-body">
-            <div class="mb-3">
-              <label class="form-label">Link del proyecto:</label>
-              <div class="input-group">
-                <input type="text" class="form-control bg-gray-700 text-white border-gray-600 focus:ring-blue-500 focus:border-blue-500" :value="shareUrl" readonly ref="shareUrlInput">
-                <button class="btn btn-outline-secondary" @click="copyShareUrl">
-                  <i class="bi bi-clipboard"></i>
-                </button>
-              </div>
-            </div>
-            <div class="d-grid gap-2">
-              <a :href="whatsappShareUrl" target="_blank" class="btn btn-success">
-                <i class="bi bi-whatsapp"></i> Compartir por WhatsApp
-              </a>
-            </div>
-            <div v-if="qrCodeUrl" class="text-center mt-3">
-              <p>Escanea este código QR para compartir:</p>
-              <img :src="qrCodeUrl" alt="QR Code" class="img-fluid">
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Modal para nuevo archivo -->
-    <div class="modal fade" id="newFileModal" tabindex="-1" ref="newFileModalRef">
-      <div class="modal-dialog">
-        <div class="modal-content bg-gray-800 text-white">
-          <div class="modal-header bg-gray-700">
-            <h5 class="modal-title">Nuevo Archivo</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-          </div>
-          <div class="modal-body">
-            <div class="mb-3">
-              <label for="modalNewFileName" class="form-label">Nombre del Archivo</label>
-              <input
-                type="text"
-                class="form-control bg-gray-700 text-white border-gray-600 focus:ring-blue-500 focus:border-blue-500"
-                id="modalNewFileName"
-                v-model="newFileName"
-                placeholder="Ingrese un nombre para el archivo"
-              >
-            </div>
-          </div>
-          <div class="modal-footer bg-gray-700">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-              Cancelar
-            </button>
-            <button
-              type="button"
-              class="btn btn-primary"
-              @click="createFile"
-              :disabled="isCreatingFile"
-            >
-              {{ isCreatingFile ? 'Creando...' : 'Crear Archivo' }}
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Toasts -->
-    <!-- Toast de copia exitosa -->
-    <div
-      class="fixed bottom-0 right-0 m-3 bg-green-500 text-white py-2 px-4 rounded shadow-md transition-opacity duration-300 ease-in-out"
-      :class="{ 'opacity-100': showCopyToast, 'opacity-0': !showCopyToast }"
-      style="z-index: 1050"
-    >
-      <div class="flex items-center justify-between">
-        <strong class="mr-4">Código Copiado</strong>
-        <button type="button" class="ml-auto text-white hover:text-gray-200 focus:outline-none" @click="showCopyToast = false">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="mt-1 text-sm">El código ha sido copiado al portapapeles.</div>
-    </div>
   </div>
-  
 </template>
 
 <script setup>
@@ -387,18 +179,6 @@ import { supabase } from '../supabase'
 import { useToast } from 'vue-toastification'
 import { useRoute, useRouter } from 'vue-router'
 import { Modal } from 'bootstrap'
-import { 
-  convertStringInterpolation, 
-  extractVariablesFromCode, 
-  evaluateCSharpExpression, 
-  transformCSharpToJS, 
-  detectCSharpError 
-} from './csharpInterpreter'
-import { executeCSharpCode, analyzeError } from './utils'
-import { transformCSharpToJavaScript } from './parser'
-import { executeFullCSharp } from './fullModeInterpreter';
-import { analyzeCodeStructure } from './debugHelper';
-import { executeSimpleCSharp } from './simpleCSharpRunner';
 import { v4 as uuidv4 } from 'uuid';
 import QRCode from 'qrcode';
 
@@ -1201,12 +981,12 @@ const shareFile = async (file = null) => {
     
     // Verificar que tengamos un archivo para compartir
     if (!fileToShare.name || !fileToShare.code) {
-      toast.error('No hay archivo para compartir')
-      return
+      toast.error('No hay archivo para compartir');
+      return;
     }
     
     // Generar un ID único para compartir
-    const uniqueShareId = uuidv4()
+    const uniqueShareId = uuidv4();
     
     // Insertar en la tabla shared_files
     const { data, error } = await supabase

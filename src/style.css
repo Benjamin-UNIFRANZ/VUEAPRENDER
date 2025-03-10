@@ -1,4 +1,4 @@
-:root {
+/* :root {
   --primary-blue: #007bff;
   --dark-blue: #004a99;
   --light-blue: #e6f3ff;
@@ -47,4 +47,43 @@ body {
   min-height: 200px;
   max-height: 400px;
   overflow-y: auto;
+} */
+@import "tailwindcss";
+:root {
+  color-scheme: dark;
 }
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: #111827;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+/* Custom scrollbar styles */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: theme('colors.gray.900');
+}
+
+::-webkit-scrollbar-thumb {
+  background: theme('colors.gray.700');
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: theme('colors.gray.600');
+}
+ 
