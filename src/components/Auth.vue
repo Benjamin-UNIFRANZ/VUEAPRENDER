@@ -2,43 +2,52 @@
   <div class="container mt-5">
     <div class="row justify-content-center">
       <div class="col-md-6">
-        <div class="card">
-          <div class="card-header bg-dark text-white">
-            <h3 class="mb-0">{{ isLogin ? 'Login' : 'Register' }}</h3>
+        <div class="bg-gray-800 shadow-md rounded px-8 pt-6 pb-8 mb-4">
+          <div class="mb-4">
+            <h3 class="text-white text-center text-xl font-bold mb-2">{{ isLogin ? 'Login' : 'Register' }}</h3>
           </div>
-          <div class="card-body">
-            <form @submit.prevent="handleSubmit">
-              <div class="mb-3">
-                <label for="email" class="form-label">Email</label>
-                <input
-                  type="email"
-                  class="form-control"
-                  id="email"
-                  v-model="email"
-                  required
-                />
-              </div>
-              <div class="mb-3">
-                <label for="password" class="form-label">Password</label>
-                <input
-                  type="password"
-                  class="form-control"
-                  id="password"
-                  v-model="password"
-                  required
-                />
-              </div>
-              <button type="submit" class="btn btn-primary w-100">
-                {{ isLogin ? 'Login' : 'Register' }}
+          <form @submit.prevent="handleSubmit">
+            <div class="mb-4">
+              <label class="block text-white text-sm font-bold mb-2" for="email">
+          Email
+              </label>
+              <input
+          class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline bg-gray-700 text-white"
+          id="email"
+          type="email"
+          placeholder="Email"
+          v-model="email"
+          required
+              />
+            </div>
+            <div class="mb-6">
+              <label class="block text-white text-sm font-bold mb-2" for="password">
+          Password
+              </label>
+              <input
+          class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline bg-gray-700 text-white"
+          id="password"
+          type="password"
+          placeholder="Password"
+          v-model="password"
+          required
+              />
+            </div>
+            <div class="flex items-center justify-between">
+              <button
+          class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full"
+          type="submit"
+              >
+          {{ isLogin ? 'Login' : 'Register' }}
               </button>
-            </form>
-            <p class="text-center mt-3">
-              {{ isLogin ? "Don't have an account?" : "Already have an account?" }}
-              <a href="#" @click.prevent="isLogin = !isLogin">
-                {{ isLogin ? 'Register' : 'Login' }}
-              </a>
-            </p>
-          </div>
+            </div>
+          </form>
+          <p class="text-center text-gray-500 text-xs mt-3">
+            {{ isLogin ? "Don't have an account?" : "Already have an account?" }}
+            <a href="#" class="text-blue-500 hover:text-blue-700" @click.prevent="isLogin = !isLogin">
+              {{ isLogin ? 'Register' : 'Login' }}
+            </a>
+          </p>
         </div>
       </div>
     </div>
