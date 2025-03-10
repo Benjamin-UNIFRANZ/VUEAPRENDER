@@ -48,6 +48,8 @@ body {
   max-height: 400px;
   overflow-y: auto;
 } */
+
+/* Tus estilos personalizados después de esto */
 @import "tailwindcss";
 :root {
   color-scheme: dark;
