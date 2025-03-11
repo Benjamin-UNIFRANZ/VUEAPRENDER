@@ -34,7 +34,17 @@
                 </ul>
               </div>
             </div>
-            <div class="font-bold text-white text-xl mb-2">{{ space.name }}</div>
+            <div class="font-bold text-white text-xl mb-2">
+              <template v-if="editingSpaceId === space.id">
+                <input v-model="editingSpaceName" class="bg-gray-600 text-white rounded px-2 py-1"/>
+                <button @click="updateSpaceName(space)" class="text-green-500 ml-2"><i class="bi bi-check"></i></button>
+                <button @click="cancelEdit" class="text-red-500 ml-1"><i class="bi bi-x"></i></button>
+              </template>
+              <template v-else>
+                {{ space.name }}
+                <button @click="editSpace(space)" class="text-blue-300 ml-2"><i class="bi bi-pencil"></i></button>
+              </template>
+            </div>
             <p class="text-gray-400 text-sm">
               <i class="bi bi-calendar mr-1"></i> {{ formatDate(space.created_at) }}
             </p>
@@ -698,6 +708,46 @@ const openWithSidebar = (space) => {
       showSidebar: true
     }
   });
+};
+
+// Variables para edición del nombre del espacio
+const editingSpaceId = ref(null);
+const editingSpaceName = ref('');
+
+// Función para iniciar edición
+const editSpace = (space) => {
+  editingSpaceId.value = space.id;
+  editingSpaceName.value = space.name;
+};
+
+// Función para cancelar edición
+const cancelEdit = () => {
+  editingSpaceId.value = null;
+  editingSpaceName.value = '';
+};
+
+// Función para actualizar el nombre del espacio en Supabase
+const updateSpaceName = async (space) => {
+  if (!editingSpaceName.value.trim()) {
+    toast.error('El nombre no puede estar vacío');
+    return;
+  }
+  try {
+    const { error } = await supabase
+      .from('project_spaces')
+      .update({ name: editingSpaceName.value.trim() })
+      .eq('id', space.id);
+    if (error) throw error;
+    // Actualizar localmente en projectSpaces
+    const index = projectSpaces.value.findIndex(s => s.id === space.id);
+    if (index !== -1) {
+      projectSpaces.value[index].name = editingSpaceName.value.trim();
+    }
+    cancelEdit();
+    toast.success('Nombre actualizado exitosamente');
+  } catch (error) {
+    toast.error('Error al actualizar el nombre: ' + error.message);
+  }
 };
 </script>
 

@@ -173,183 +173,183 @@
       </div>
     </div>
 
-    <!-- Modales -->
-    <!-- New Project Modal -->
-    <div class="modal fade" id="newProjectModal" tabindex="-1" ref="newProjectModalRef">
-      <div class="modal-dialog">
-        <div class="modal-content bg-gray-800 text-white">
-          <div class="modal-header bg-gray-700">
-            <h5 class="modal-title">Nuevo Proyecto</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-          </div>
-          <div class="modal-body">
-            <div class="mb-3">
-              <label class="form-label">Nombre del Espacio</label>
-              <input
-                type="text"
-                class="form-control bg-gray-700 text-white border-gray-600 focus:ring-blue-500 focus:border-blue-500"
-                v-model="newProjectName"
-                placeholder="Ingrese un nombre para el espacio"
-              >
-            </div>
-            <div class="mb-3">
-              <label class="form-label">Nombre del Archivo</label>
-              <input
-                type="text"
-                class="form-control bg-gray-700 text-white border-gray-600 focus:ring-blue-500 focus:border-blue-500"
-                v-model="newFileName"
-                placeholder="Ingrese un nombre para el archivo inicial"
-              >
-            </div>
-          </div>
-          <div class="modal-footer bg-gray-700">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-              Cancelar
-            </button>
-            <button
-              type="button"
-              class="btn btn-primary"
-              @click="createNewProject"
-              :disabled="isCreatingProject"
-            >
-              {{ isCreatingProject ? 'Creando...' : 'Crear Proyecto' }}
-            </button>
-          </div>
+      <!-- Modales -->
+      <!-- New Project Modal -->
+      <div class="modal fade" id="newProjectModal" tabindex="-1" ref="newProjectModalRef">
+        <div class="modal-dialog">
+        <div class="modal-content bg-gray-800 text-black">
+        <div class="modal-header bg-gray-700">
+        <h5 class="modal-title text-black">Nuevo Proyecto</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+        <div class="mb-3">
+          <label class="form-label">Nombre del Espacio</label>
+          <input
+          type="text"
+          class="form-control bg-gray-700 text-black border-gray-600 focus:ring-blue-500 focus:border-blue-500"
+          v-model="newProjectName"
+          placeholder="Ingrese un nombre para el espacio"
+          >
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Nombre del Archivo</label>
+          <input
+          type="text"
+          class="form-control bg-gray-700 text-black border-gray-600 focus:ring-blue-500 focus:border-blue-500"
+          v-model="newFileName"
+          placeholder="Ingrese un nombre para el archivo inicial"
+          >
+        </div>
+        </div>
+        <div class="modal-footer bg-gray-700">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          Cancelar
+        </button>
+        <button
+          type="button"
+          class="btn btn-primary"
+          @click="createNewProject"
+          :disabled="isCreatingProject"
+        >
+          {{ isCreatingProject ? 'Creando...' : 'Crear Proyecto' }}
+        </button>
+        </div>
+        </div>
         </div>
       </div>
-    </div>
 
-    <!-- Save to Project Modal -->
-    <div class="modal fade" id="saveToProjectModal" tabindex="-1" ref="saveToProjectModalRef">
-      <div class="modal-dialog">
-        <div class="modal-content bg-gray-800 text-white">
-          <div class="modal-header bg-gray-700">
-            <h5 class="modal-title">Guardar en Proyecto</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-          </div>
-          <div class="modal-body">
-            <p>Selecciona un espacio de proyecto para guardar el archivo:</p>
-            <select class="form-select bg-gray-700 text-white border-gray-600 focus:ring-blue-500 focus:border-blue-500" v-model="selectedProjectSpace">
-              <option v-for="space in projectSpaces" :key="space.id" :value="space.id">
-                {{ space.name }}
-              </option>
-            </select>
-          </div>
-          <div class="modal-footer bg-gray-700">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-              Cancelar
-            </button>
-            <button type="button" class="btn btn-primary" @click="saveToProject">
-              Guardar
-            </button>
-          </div>
+      <!-- Save to Project Modal -->
+      <div class="modal fade" id="saveToProjectModal" tabindex="-1" ref="saveToProjectModalRef">
+        <div class="modal-dialog">
+        <div class="modal-content bg-gray-800 text-black">
+        <div class="modal-header bg-gray-700">
+        <h5 class="modal-title text-black">Guardar en Proyecto</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+        <p>Selecciona un espacio de proyecto para guardar el archivo:</p>
+        <select class="form-select bg-gray-700 text-black border-gray-600 focus:ring-blue-500 focus:border-blue-500" v-model="selectedProjectSpace">
+          <option v-for="space in projectSpaces" :key="space.id" :value="space.id">
+          {{ space.name }}
+          </option>
+        </select>
+        </div>
+        <div class="modal-footer bg-gray-700">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          Cancelar
+        </button>
+        <button type="button" class="btn btn-primary" @click="saveToProject">
+          Guardar
+        </button>
+        </div>
+        </div>
         </div>
       </div>
-    </div>
 
-    <!-- Modal de confirmación de eliminación -->
-    <div class="modal fade" id="deleteModal" tabindex="-1" ref="deleteModalRef">
-      <div class="modal-dialog">
-        <div class="modal-content bg-gray-800 text-white">
-          <div class="modal-header bg-gray-700">
-            <h5 class="modal-title">Confirmar eliminación</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-          </div>
-          <div class="modal-body">
-            <p v-if="itemToDelete?.type === 'space'">
-              ¿Estás seguro que deseas eliminar el espacio "<strong>{{ itemToDelete.item.name }}</strong>"?
-              <br>
-              <small class="text-red-500">Esta acción eliminará todos los archivos dentro del espacio.</small>
-            </p>
-            <p v-else>
-              ¿Estás seguro que deseas eliminar el archivo "<strong>{{ itemToDelete?.item.name }}</strong>"?
-            </p>
-          </div>
-          <div class="modal-footer bg-gray-700">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-              Cancelar
-            </button>
-            <button
-              type="button"
-              class="btn btn-danger"
-              @click="deleteItem"
-              :disabled="isDeleting"
-            >
-              {{ isDeleting ? 'Eliminando...' : 'Eliminar' }}
-            </button>
-          </div>
+      <!-- Modal de confirmación de eliminación -->
+      <div class="modal fade" id="deleteModal" tabindex="-1" ref="deleteModalRef">
+        <div class="modal-dialog">
+        <div class="modal-content bg-gray-800 text-black">
+        <div class="modal-header bg-gray-700">
+        <h5 class="modal-title text-black">Confirmar eliminación</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+        <p v-if="itemToDelete?.type === 'space'">
+          ¿Estás seguro que deseas eliminar el espacio "<strong>{{ itemToDelete.item.name }}</strong>"?
+          <br>
+          <small class="text-red-500">Esta acción eliminará todos los archivos dentro del espacio.</small>
+        </p>
+        <p v-else>
+          ¿Estás seguro que deseas eliminar el archivo "<strong>{{ itemToDelete?.item.name }}</strong>"?
+        </p>
+        </div>
+        <div class="modal-footer bg-gray-700">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          Cancelar
+        </button>
+        <button
+          type="button"
+          class="btn btn-danger"
+          @click="deleteItem"
+          :disabled="isDeleting"
+        >
+          {{ isDeleting ? 'Eliminando...' : 'Eliminar' }}
+        </button>
+        </div>
+        </div>
         </div>
       </div>
-    </div>
 
-    <!-- Modal para compartir -->
-    <div class="modal fade" id="shareModal" tabindex="-1" ref="shareModalRef">
-      <div class="modal-dialog">
-        <div class="modal-content bg-gray-800 text-white">
-          <div class="modal-header bg-gray-700">
-            <h5 class="modal-title">Compartir Proyecto</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-          </div>
-          <div class="modal-body">
-            <div class="mb-3">
-              <label class="form-label">Link del proyecto:</label>
-              <div class="input-group">
-                <input type="text" class="form-control bg-gray-700 text-white border-gray-600 focus:ring-blue-500 focus:border-blue-500" :value="shareUrl" readonly ref="shareUrlInput">
-                <button class="btn btn-outline-secondary" @click="copyShareUrl">
-                  <i class="bi bi-clipboard"></i>
-                </button>
-              </div>
-            </div>
-            <div class="d-grid gap-2">
-              <a :href="whatsappShareUrl" target="_blank" class="btn btn-success">
-                <i class="bi bi-whatsapp"></i> Compartir por WhatsApp
-              </a>
-            </div>
-            <div v-if="qrCodeUrl" class="text-center mt-3">
-              <p>Escanea este código QR para compartir:</p>
-              <img :src="qrCodeUrl" alt="QR Code" class="img-fluid">
-            </div>
+      <!-- Modal para compartir -->
+      <div class="modal fade" id="shareModal" tabindex="-1" ref="shareModalRef">
+        <div class="modal-dialog">
+        <div class="modal-content bg-gray-800 text-black">
+        <div class="modal-header bg-gray-700">
+        <h5 class="modal-title text-black">Compartir Proyecto</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+        <div class="mb-3">
+          <label class="form-label">Link del proyecto:</label>
+          <div class="input-group">
+          <input type="text" class="form-control bg-gray-700 text-black border-gray-600 focus:ring-blue-500 focus:border-blue-500" :value="shareUrl" readonly ref="shareUrlInput">
+          <button class="btn btn-outline-secondary" @click="copyShareUrl">
+          <i class="bi bi-clipboard"></i>
+          </button>
           </div>
         </div>
+        <div class="d-grid gap-2">
+          <a :href="whatsappShareUrl" target="_blank" class="btn btn-success">
+          <i class="bi bi-whatsapp"></i> Compartir por WhatsApp
+          </a>
+        </div>
+        <div v-if="qrCodeUrl" class="text-center mt-3">
+          <p>Escanea este código QR para compartir:</p>
+          <img :src="qrCodeUrl" alt="QR Code" class="img-fluid mx-auto d-block">
+        </div>
+        </div>
+        </div>
+        </div>
       </div>
-    </div>
 
-    <!-- Modal para nuevo archivo -->
-    <div class="modal fade" id="newFileModal" tabindex="-1" ref="newFileModalRef">
-      <div class="modal-dialog">
-        <div class="modal-content bg-gray-800 text-white">
-          <div class="modal-header bg-gray-700">
-            <h5 class="modal-title">Nuevo Archivo</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-          </div>
-          <div class="modal-body">
-            <div class="mb-3">
-              <label for="modalNewFileName" class="form-label">Nombre del Archivo</label>
-              <input
-                type="text"
-                class="form-control bg-gray-700 text-white border-gray-600 focus:ring-blue-500 focus:border-blue-500"
-                id="modalNewFileName"
-                v-model="newFileName"
-                placeholder="Ingrese un nombre para el archivo"
-              >
-            </div>
-          </div>
-          <div class="modal-footer bg-gray-700">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-              Cancelar
-            </button>
-            <button
-              type="button"
-              class="btn btn-primary"
-              @click="createFile"
-              :disabled="isCreatingFile"
-            >
-              {{ isCreatingFile ? 'Creando...' : 'Crear Archivo' }}
-            </button>
-          </div>
+      <!-- Modal para nuevo archivo -->
+      <div class="modal fade" id="newFileModal" tabindex="-1" ref="newFileModalRef">
+        <div class="modal-dialog">
+        <div class="modal-content bg-gray-800 text-black">
+        <div class="modal-header bg-gray-700">
+        <h5 class="modal-title text-black">Nuevo Archivo</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+        <div class="mb-3">
+          <label for="modalNewFileName" class="form-label">Nombre del Archivo</label>
+          <input
+          type="text"
+          class="form-control bg-gray-700 text-black border-gray-600 focus:ring-blue-500 focus:border-blue-500"
+          id="modalNewFileName"
+          v-model="newFileName"
+          placeholder="Ingrese un nombre para el archivo"
+          >
+        </div>
+        </div>
+        <div class="modal-footer bg-gray-700">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          Cancelar
+        </button>
+        <button
+          type="button"
+          class="btn btn-primary"
+          @click="createFile"
+          :disabled="isCreatingFile"
+        >
+          {{ isCreatingFile ? 'Creando...' : 'Crear Archivo' }}
+        </button>
+        </div>
+        </div>
         </div>
       </div>
-    </div>
 
     <!-- Toasts -->
     <!-- Toast de copia exitosa -->
